@@ -16,7 +16,6 @@ async function connectDB() {
   db = client.db('krc_autoparts');
   console.log('✅ MongoDB connected!');
 
-  // สร้างหมวดหมู่เริ่มต้น
   const catCount = await db.collection('categories').countDocuments();
   if (catCount === 0) {
     await db.collection('categories').insertMany([
@@ -43,13 +42,10 @@ app.get('/api/admin/stats', async (req, res) => {
     ]);
     const totalRevenue = orders.filter(o=>o.status!=='pending').reduce((s,o)=>s+o.total,0);
     const topProducts = [...products].sort((a,b)=>(b.sold||0)-(a.sold||0)).slice(0,5);
-
-    // นับสินค้าแต่ละหมวด
     const catStats = categories.map(c => ({
       ...c,
       count: products.filter(p=>p.category===c.name).length
     }));
-
     res.json({
       totalRevenue, totalOrders: orders.length,
       pendingOrders: orders.filter(o=>o.status==='pending').length,
@@ -156,6 +152,27 @@ app.put('/api/orders/:id/status', async (req, res) => {
   try {
     await db.collection('orders').updateOne(
       { orderId: req.params.id }, { $set: { status: req.body.status } }
+    );
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── THEME ─────────────────────────────────────────────────────
+app.get('/api/theme', async (req, res) => {
+  try {
+    const theme = await db.collection('settings').findOne({ key: 'theme' });
+    if (!theme) return res.json({});
+    const { _id, key, ...data } = theme;
+    res.json(data);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/theme', async (req, res) => {
+  try {
+    await db.collection('settings').updateOne(
+      { key: 'theme' },
+      { $set: { key: 'theme', ...req.body, updatedAt: new Date() } },
+      { upsert: true }
     );
     res.json({ success: true });
   } catch(e) { res.status(500).json({ error: e.message }); }
