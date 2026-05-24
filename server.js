@@ -1,71 +1,133 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-let products = [
-  { id:1, name:'ชุดซ่อมเครื่องยนต์', brand:'Toyota/Corolla', price:2850, stock:15, category:'เครื่องยนต์', status:'active', sold:42 },
-  { id:2, name:'ลูกหมากปีกนกบน',    brand:'ทุกยี่ห้อ',      price:380,  stock:88, category:'ช่วงล่าง',   status:'active', sold:128 },
-  { id:3, name:'ไฟหน้า LED H4',      brand:'Universal',      price:650,  stock:34, category:'ไฟ & ไฟฟ้า', status:'active', sold:67 },
-  { id:4, name:'คอมแอร์ Denso',      brand:'Denso',          price:7500, stock:6,  category:'แอร์',       status:'active', sold:18 },
-  { id:5, name:'ผ้าเบรกหน้า Bendix', brand:'Bendix',         price:890,  stock:52, category:'เบรก',       status:'active', sold:95 },
-  { id:6, name:'น้ำมันเครื่อง 10W-30',brand:'Castrol',       price:750,  stock:120,category:'น้ำมัน',     status:'active', sold:210 },
-  { id:7, name:'สายพานไทม์มิ่ง',     brand:'Toyota',         price:1200, stock:23, category:'เครื่องยนต์',status:'active', sold:44 },
-  { id:8, name:'แบตเตอรี่ GS 55Ah',  brand:'GS Battery',     price:1850, stock:19, category:'ไฟฟ้า',      status:'active', sold:76 },
-];
+// ─── MongoDB Connection ────────────────────────────────────────
+const MONGO_URI = process.env.MONGO_URI;
+let db;
 
-let orders = [
-  { id:'KRC-10001', customer:'สมชาย ใจดี',    phone:'081-xxx-xxxx', total:2850, status:'pending',   items:['ชุดซ่อมเครื่องยนต์'], date:'2026-05-24', payment:'โอน' },
-  { id:'KRC-10002', customer:'วิภา รักดี',     phone:'089-xxx-xxxx', total:1640, status:'paid',      items:['ผ้าเบรกหน้า x2','ไฟหน้า LED'], date:'2026-05-24', payment:'บัตร' },
-  { id:'KRC-10003', customer:'นคร สุขใจ',     phone:'086-xxx-xxxx', total:7500, status:'shipping',  items:['คอมแอร์ Denso'], date:'2026-05-23', payment:'โอน' },
-  { id:'KRC-10004', customer:'มาลี ชื่นบาน',  phone:'082-xxx-xxxx', total:750,  status:'delivered', items:['น้ำมันเครื่อง'], date:'2026-05-23', payment:'โอน' },
-  { id:'KRC-10005', customer:'ประเสริฐ ดีงาม', phone:'091-xxx-xxxx', total:3700, status:'paid',      items:['แบตเตอรี่ GS','ลูกหมาก x5'], date:'2026-05-22', payment:'PayPal' },
-];
+async function connectDB() {
+  const client = new MongoClient(MONGO_URI);
+  await client.connect();
+  db = client.db('krc_autoparts');
+  console.log('✅ MongoDB connected!');
 
-let nextProductId = 9;
-let nextOrderId = 10006;
+  // สร้างข้อมูลเริ่มต้นถ้ายังไม่มี
+  const count = await db.collection('products').countDocuments();
+  if (count === 0) {
+    await db.collection('products').insertMany([
+      { name:'ชุดซ่อมเครื่องยนต์', brand:'Toyota/Corolla', price:2850, stock:15, category:'เครื่องยนต์', status:'active', sold:0 },
+      { name:'ลูกหมากปีกนกบน',    brand:'ทุกยี่ห้อ',      price:380,  stock:88, category:'ช่วงล่าง',    status:'active', sold:0 },
+      { name:'ไฟหน้า LED H4',      brand:'Universal',      price:650,  stock:34, category:'ไฟ & ไฟฟ้า',  status:'active', sold:0 },
+      { name:'คอมแอร์ Denso',      brand:'Denso',          price:7500, stock:6,  category:'แอร์',        status:'active', sold:0 },
+      { name:'ผ้าเบรกหน้า Bendix', brand:'Bendix',         price:890,  stock:52, category:'เบรก',        status:'active', sold:0 },
+      { name:'น้ำมันเครื่อง 10W-30',brand:'Castrol',       price:750,  stock:120,category:'น้ำมัน',      status:'active', sold:0 },
+      { name:'สายพานไทม์มิ่ง',     brand:'Toyota',         price:1200, stock:23, category:'เครื่องยนต์', status:'active', sold:0 },
+      { name:'แบตเตอรี่ GS 55Ah',  brand:'GS Battery',     price:1850, stock:19, category:'ไฟฟ้า',       status:'active', sold:0 },
+    ]);
+    console.log('✅ Initial products created');
+  }
+}
 
-app.get('/', (req, res) => res.json({ status:'ok', message:'KRC Auto Parts API' }));
+// ─── Health ────────────────────────────────────────────────────
+app.get('/', (req, res) => res.json({ status:'ok', message:'KRC Auto Parts API 🚗' }));
 
-app.get('/api/admin/stats', (req, res) => {
-  const totalRevenue = orders.filter(o=>o.status!=='pending').reduce((s,o)=>s+o.total,0);
-  res.json({
-    totalRevenue,
-    totalOrders: orders.length,
-    pendingOrders: orders.filter(o=>o.status==='pending').length,
-    totalProducts: products.length,
-    lowStock: products.filter(p=>p.stock<10).length,
-    topProducts: [...products].sort((a,b)=>b.sold-a.sold).slice(0,5)
-  });
+// ─── STATS ─────────────────────────────────────────────────────
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const [products, orders] = await Promise.all([
+      db.collection('products').find().toArray(),
+      db.collection('orders').find().toArray(),
+    ]);
+    const totalRevenue = orders.filter(o=>o.status!=='pending').reduce((s,o)=>s+o.total,0);
+    const topProducts = [...products].sort((a,b)=>(b.sold||0)-(a.sold||0)).slice(0,5);
+    res.json({
+      totalRevenue,
+      totalOrders: orders.length,
+      pendingOrders: orders.filter(o=>o.status==='pending').length,
+      totalProducts: products.length,
+      lowStock: products.filter(p=>p.stock<10).length,
+      topProducts,
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/products', (req, res) => res.json(products));
-app.post('/api/products', (req, res) => {
-  const p = { id:nextProductId++, sold:0, status:'active', ...req.body };
-  products.push(p); res.json(p);
-});
-app.put('/api/products/:id', (req, res) => {
-  const idx = products.findIndex(p=>p.id===parseInt(req.params.id));
-  if(idx===-1) return res.status(404).json({error:'Not found'});
-  products[idx] = { ...products[idx], ...req.body }; res.json(products[idx]);
-});
-app.delete('/api/products/:id', (req, res) => {
-  products = products.filter(p=>p.id!==parseInt(req.params.id)); res.json({success:true});
+// ─── PRODUCTS ──────────────────────────────────────────────────
+app.get('/api/products', async (req, res) => {
+  try {
+    const products = await db.collection('products').find().toArray();
+    res.json(products.map(p => ({ ...p, id: p._id })));
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/orders', (req, res) => res.json(orders));
-app.put('/api/orders/:id/status', (req, res) => {
-  const order = orders.find(o=>o.id===req.params.id);
-  if(!order) return res.status(404).json({error:'Not found'});
-  order.status = req.body.status; res.json(order);
-});
-app.post('/api/orders', (req, res) => {
-  const order = { id:`KRC-${nextOrderId++}`, date:new Date().toISOString().split('T')[0], status:'pending', ...req.body };
-  orders.unshift(order); res.json(order);
+app.post('/api/products', async (req, res) => {
+  try {
+    const result = await db.collection('products').insertOne({ sold:0, status:'active', ...req.body });
+    res.json({ ...req.body, id: result.insertedId, _id: result.insertedId });
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    await db.collection('products').updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: req.body }
+    );
+    const updated = await db.collection('products').findOne({ _id: new ObjectId(req.params.id) });
+    res.json({ ...updated, id: updated._id });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    await db.collection('products').deleteOne({ _id: new ObjectId(req.params.id) });
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── ORDERS ────────────────────────────────────────────────────
+app.get('/api/orders', async (req, res) => {
+  try {
+    const orders = await db.collection('orders').find().sort({ date:-1 }).toArray();
+    res.json(orders.map(o => ({ ...o, id: o.orderId || o._id })));
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/orders', async (req, res) => {
+  try {
+    const count = await db.collection('orders').countDocuments();
+    const orderId = `KRC-${10001 + count}`;
+    const order = {
+      orderId,
+      date: new Date().toISOString().split('T')[0],
+      status: 'pending',
+      ...req.body
+    };
+    await db.collection('orders').insertOne(order);
+    res.json({ ...order, id: orderId });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/orders/:id/status', async (req, res) => {
+  try {
+    await db.collection('orders').updateOne(
+      { orderId: req.params.id },
+      { $set: { status: req.body.status } }
+    );
+    res.json({ success: true, status: req.body.status });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── START ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`KRC API running on port ${PORT}`));
+connectDB().then(() => {
+  app.listen(PORT, () => console.log(`🚗 KRC API running on port ${PORT}`));
+}).catch(err => {
+  console.error('MongoDB connection failed:', err);
+  process.exit(1);
+});
