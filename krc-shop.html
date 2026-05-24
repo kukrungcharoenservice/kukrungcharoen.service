@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRC Auto Parts — อะไหล่รถแท็กซี่ทุกชนิด</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0A1628;--blue:#1A3A6B;--blue2:#2456A4;--blue3:#3A7BD5;--silver:#C0C8D8;--gold:#C8A84B;--gold2:#E8C96A;--white:#F8FAFF;--bg:#F0F4FA;--text:#0A1628;--text2:#4A5568;--border:rgba(36,86,164,0.12);--r:6px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;}
+nav{background:var(--navy);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold);}
+.logo-wrap{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--blue2),var(--blue3));border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:white;}
+.logo-main{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:white;letter-spacing:2px;}
+.logo-main span{color:var(--gold);}
+.logo-sub{font-size:0.7rem;color:var(--silver);opacity:0.7;}
+.nav-links{display:flex;gap:1.5rem;}
+.nav-links a{text-decoration:none;font-size:0.85rem;letter-spacing:1px;color:var(--silver);text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover{color:var(--gold);}
+.cart-btn{background:var(--gold);color:var(--navy);border:none;padding:0.5rem 1.2rem;font-family:'Sarabun',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;border-radius:var(--r);display:flex;align-items:center;gap:6px;transition:background 0.2s;}
+.cart-btn:hover{background:var(--gold2);}
+.cart-count{background:var(--navy);color:white;border-radius:50%;width:18px;height:18px;font-size:0.7rem;display:flex;align-items:center;justify-content:center;}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 60%,var(--blue2) 100%);padding:4rem 2rem 3rem;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--gold);color:var(--gold);padding:0.3rem 1rem;font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:1.2rem;}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;color:white;line-height:1.1;margin-bottom:0.8rem;letter-spacing:1px;}
+.hero h1 span{color:var(--gold);}
+.hero p{font-size:1rem;color:var(--silver);max-width:460px;line-height:1.7;margin-bottom:1.5rem;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-gold{background:var(--gold);color:var(--navy);padding:0.8rem 1.8rem;border:none;font-family:'Sarabun',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;border-radius:var(--r);transition:all 0.2s;}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:white;padding:0.8rem 1.8rem;border:1px solid rgba(255,255,255,0.3);font-family:'Sarabun',sans-serif;font-size:0.9rem;cursor:pointer;border-radius:var(--r);transition:all 0.2s;}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.hero-stats{display:flex;flex-direction:column;gap:1rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:1.5rem 2rem;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);line-height:1;}
+.stat-label{font-size:0.75rem;color:var(--silver);margin-top:2px;}
+.info-bar{background:var(--blue);padding:0.7rem 2rem;display:flex;align-items:center;justify-content:center;gap:2.5rem;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.08);}
+.info-item{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--silver);}
+.info-item strong{color:white;}
+.section{padding:2rem;max-width:1100px;margin:0 auto;}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem;border-left:4px solid var(--gold);padding-left:1rem;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;color:var(--navy);letter-spacing:1px;}
+.section-sub{font-size:0.8rem;color:var(--text2);}
+.cats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:1rem;}
+.cat-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1.2rem 0.8rem;text-align:center;cursor:pointer;transition:all 0.2s;}
+.cat-card:hover,.cat-card.active{border-color:var(--blue2);transform:translateY(-2px);box-shadow:0 4px 16px rgba(36,86,164,0.12);background:#EEF4FF;}
+.cat-card.active{border-color:var(--gold);background:#FFFBF0;}
+.cat-icon{font-size:2rem;margin-bottom:6px;}
+.cat-name{font-size:0.8rem;font-weight:600;color:var(--blue);}
+.cat-count{font-size:0.7rem;color:var(--text2);}
+.cat-all{background:var(--navy);border-color:var(--navy);}
+.cat-all .cat-name{color:white;}
+.cat-all .cat-count{color:var(--silver);}
+.cat-all:hover,.cat-all.active{background:var(--blue2);border-color:var(--blue2);}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem;}
+.product-card{background:white;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all 0.25s;position:relative;}
+.product-card:hover{border-color:var(--blue2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(10,22,40,0.1);}
+.product-img{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#EEF2F8,#DDE4F0);display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;}
+.product-badge{position:absolute;top:10px;left:10px;background:var(--gold);color:var(--navy);font-size:0.68rem;font-weight:700;padding:2px 8px;letter-spacing:1px;text-transform:uppercase;border-radius:2px;}
+.product-badge.new{background:var(--blue2);color:white;}
+.product-info{padding:1rem 1.1rem 1.1rem;}
+.product-brand{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--blue2);font-weight:600;margin-bottom:3px;}
+.product-name{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:4px;line-height:1.2;}
+.product-desc{font-size:0.78rem;color:var(--text2);margin-bottom:0.8rem;line-height:1.5;}
+.product-footer{display:flex;align-items:center;justify-content:space-between;}
+.product-price{font-size:1.1rem;font-weight:700;color:var(--blue2);}
+.product-price small{font-size:0.72rem;color:var(--text2);font-weight:400;}
+.add-btn{background:var(--navy);color:white;border:none;width:34px;height:34px;border-radius:var(--r);font-size:1.1rem;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;}
+.add-btn:hover{background:var(--blue2);}
+.empty-products{text-align:center;padding:4rem;color:var(--text2);}
+.empty-products-icon{font-size:3rem;margin-bottom:1rem;opacity:0.3;}
+.loading-products{text-align:center;padding:3rem;color:var(--text2);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,0.8);z-index:200;align-items:flex-start;justify-content:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal-panel{background:white;width:min(100%,460px);height:100vh;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;animation:slideIn 0.3s ease;}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--gold);}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:700;color:var(--navy);}
+.close-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text2);}
+.cart-item{display:flex;gap:1rem;padding:0.8rem 0;border-bottom:1px solid var(--border);align-items:center;}
+.cart-item-img{width:52px;height:52px;background:linear-gradient(135deg,#EEF2F8,#DDE4F0);border-radius:var(--r);font-size:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cart-item-name{font-size:0.9rem;font-weight:600;color:var(--navy);}
+.cart-item-price{font-size:0.8rem;color:var(--text2);}
+.cart-item-qty{display:flex;align-items:center;gap:6px;margin-top:4px;}
+.qty-btn{width:22px;height:22px;border:1px solid var(--border);background:none;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;color:var(--text2);}
+.qty-val{font-size:0.85rem;min-width:16px;text-align:center;font-weight:600;}
+.remove-btn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:0.72rem;opacity:0.6;}
+.remove-btn:hover{opacity:1;color:#cc3333;}
+.cart-summary{border-top:1px solid var(--border);padding-top:1rem;margin-bottom:1.2rem;}
+.sum-row{display:flex;justify-content:space-between;font-size:0.88rem;color:var(--text2);margin-bottom:5px;}
+.sum-row.total{font-size:1rem;font-weight:700;color:var(--navy);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.sum-row.total span:last-child{color:var(--blue2);}
+.pay-section-title{font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:0.7rem;font-weight:600;}
+.pay-methods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.2rem;}
+.pay-method{border:1.5px solid var(--border);border-radius:var(--r);padding:0.7rem 0.4rem;text-align:center;cursor:pointer;transition:all 0.2s;background:#F8FAFF;}
+.pay-method:hover{border-color:var(--blue2);}
+.pay-method.active{border-color:var(--gold);background:#FFFBF0;}
+.pay-method-icon{font-size:1.4rem;margin-bottom:2px;}
+.pay-method-name{font-size:0.68rem;font-weight:600;color:var(--text2);}
+.form-group{margin-bottom:0.9rem;}
+.form-label{display:block;font-size:0.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:5px;font-weight:600;}
+.form-input{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:0.55rem 0.75rem;font-family:'Sarabun',sans-serif;font-size:0.88rem;color:var(--text);background:#F8FAFF;outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:var(--blue2);background:white;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.secure-badge{display:flex;align-items:center;gap:6px;font-size:0.72rem;color:#2A6B3C;margin-bottom:0.8rem;}
+.checkout-btn{width:100%;background:var(--navy);color:white;border:none;padding:0.9rem;font-family:'Sarabun',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;border-radius:var(--r);transition:background 0.2s;}
+.checkout-btn:hover{background:var(--blue2);}
+.empty-cart{text-align:center;padding:3rem 1rem;color:var(--text2);}
+.empty-cart-icon{font-size:3rem;margin-bottom:1rem;opacity:0.3;}
+.pay-form{display:none;}
+.pay-form.active{display:block;}
+.promptpay-panel{text-align:center;padding:0.5rem 0;}
+.qr-box{width:170px;height:170px;margin:0 auto 1rem;border:1px solid var(--border);border-radius:var(--r);background:white;display:flex;align-items:center;justify-content:center;padding:10px;}
+.promptpay-num{font-size:1rem;font-weight:700;letter-spacing:2px;color:var(--blue2);margin-bottom:4px;}
+.promptpay-sub{font-size:0.78rem;color:var(--text2);}
+.promptpay-steps{text-align:left;margin-top:1rem;background:#F8FAFF;border-radius:var(--r);padding:0.9rem;}
+.step{display:flex;align-items:flex-start;gap:8px;font-size:0.8rem;color:var(--text2);margin-bottom:7px;}
+.step-num{width:18px;height:18px;border-radius:50%;background:var(--blue2);color:white;font-size:0.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;}
+.paypal-panel{padding:1rem 0;text-align:center;}
+.paypal-logo{font-size:1.8rem;font-weight:700;color:#003087;margin-bottom:0.5rem;}
+.paypal-logo span{color:#009cde;}
+.paypal-note{font-size:0.8rem;color:var(--text2);margin-bottom:1.2rem;}
+.paypal-btn{background:#FFC439;color:#003087;border:none;padding:0.85rem;width:100%;border-radius:24px;font-weight:700;font-size:0.95rem;cursor:pointer;font-family:'Sarabun',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;}
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,0.85);z-index:300;align-items:center;justify-content:center;}
+.success-overlay.open{display:flex;}
+.success-card{background:white;border-radius:var(--r);padding:2.5rem 2rem;text-align:center;max-width:360px;width:90%;animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);border-top:4px solid var(--gold);}
+@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+.success-icon{font-size:3rem;margin-bottom:0.8rem;}
+.success-title{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;}
+.success-sub{font-size:0.85rem;color:var(--text2);line-height:1.6;margin-bottom:1.2rem;}
+.order-ref{background:#EEF2F8;border-radius:var(--r);padding:0.5rem 1rem;font-size:0.82rem;letter-spacing:2px;color:var(--blue2);font-weight:700;margin-bottom:1.2rem;display:inline-block;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:white;padding:0.65rem 1.4rem;border-radius:var(--r);font-size:0.85rem;z-index:400;transition:transform 0.3s;white-space:nowrap;border-left:3px solid var(--gold);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+footer{background:var(--navy);border-top:2px solid var(--gold);padding:2rem;margin-top:3rem;color:var(--silver);text-align:center;}
+.footer-logo{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;color:white;letter-spacing:2px;margin-bottom:0.5rem;}
+.footer-logo span{color:var(--gold);}
+.footer-info{font-size:0.82rem;line-height:2;opacity:0.75;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo-wrap">
+    <div class="logo-icon">K</div>
+    <div>
+      <div class="logo-main">KRC <span>AUTO PARTS</span></div>
+      <div class="logo-sub">อะไหล่รถแท็กซี่ทุกชนิด</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#">หน้าแรก</a><a href="#products">สินค้า</a><a href="#">เกี่ยวกับเรา</a><a href="#">ติดต่อ</a>
+  </div>
+  <button class="cart-btn" onclick="toggleCart()">🛒 ตะกร้า <span class="cart-count" id="cartCount">0</span></button>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">⚙ อะไหล่แท้ คุณภาพเกรด A</div>
+      <h1>อะไหล่รถแท็กซี่<br><span>ครบ จบ ที่เดียว</span></h1>
+      <p>บริษัท กุ๊ก รุ่งเจริญ ออโต้พาร์ท จำกัด จำหน่ายอะไหล่รถแท็กซี่ทุกชนิด ราคายุติธรรม ส่งทั่วประเทศ</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">เลือกซื้อสินค้า</button>
+        <button class="btn-outline" onclick="window.location='tel:0863279508'">📞 086-3279508</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" id="heroProductCount">...</div><div class="stat-label">รายการสินค้า</div></div>
+      <div class="stat"><div class="stat-num">10+</div><div class="stat-label">ปีประสบการณ์</div></div>
+      <div class="stat"><div class="stat-num">24h</div><div class="stat-label">จัดส่งรวดเร็ว</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="info-bar">
+  <div class="info-item">📍 <strong>51/244 ซอยนวลจันทร์ 17 บึงกุ่ม กรุงเทพฯ</strong></div>
+  <div class="info-item">📞 <strong>086-3279508</strong></div>
+  <div class="info-item">🕐 <strong>จ-ส 08:00–18:00 น.</strong></div>
+  <div class="info-item">🚚 <strong>ส่งทั่วประเทศ</strong></div>
+</div>
+
+<div class="section">
+  <div class="section-header"><span class="section-title">หมวดหมู่สินค้า</span><span class="section-sub">Categories</span></div>
+  <div class="cats-grid" id="catsGrid"><div style="color:var(--text2);font-size:0.85rem;">กำลังโหลด...</div></div>
+</div>
+
+<div class="section" id="products">
+  <div class="section-header">
+    <span class="section-title" id="productsTitle">สินค้าทั้งหมด</span>
+    <span class="section-sub" id="productsCount"></span>
+  </div>
+  <div class="products-grid" id="productsGrid"><div class="loading-products">กำลังโหลดสินค้า...</div></div>
+</div>
+
+<!-- Cart -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">🛒 ตะกร้าสินค้า</div>
+      <button class="close-btn" onclick="toggleCart()">✕</button>
+    </div>
+    <div id="cartContent"></div>
+    <div id="checkoutSection" style="display:none;">
+      <div class="cart-summary" id="cartSummary"></div>
+      <div class="pay-section-title">เลือกวิธีชำระเงิน</div>
+      <div class="pay-methods">
+        <div class="pay-method active" onclick="selectPay('card')" id="pm-card"><div class="pay-method-icon">💳</div><div class="pay-method-name">บัตรเครดิต</div></div>
+        <div class="pay-method" onclick="selectPay('promptpay')" id="pm-promptpay"><div class="pay-method-icon">📱</div><div class="pay-method-name">PromptPay</div></div>
+        <div class="pay-method" onclick="selectPay('paypal')" id="pm-paypal"><div class="pay-method-icon">🅿️</div><div class="pay-method-name">PayPal</div></div>
+      </div>
+      <div class="pay-form active" id="form-card">
+        <div class="secure-badge">🔒 ชำระเงินผ่าน Stripe — ปลอดภัย 100%</div>
+        <div class="form-group"><label class="form-label">ชื่อบนบัตร</label><input class="form-input" type="text" placeholder="SOMCHAI JAIDEE"></div>
+        <div class="form-group"><label class="form-label">เลขบัตร</label><input class="form-input" type="text" placeholder="4242 4242 4242 4242" maxlength="19" oninput="let v=this.value.replace(/\D/g,'').substring(0,16);this.value=v.replace(/(.{4})/g,'$1 ').trim()"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">วันหมดอายุ</label><input class="form-input" type="text" placeholder="MM/YY" maxlength="5"></div>
+          <div class="form-group"><label class="form-label">CVV</label><input class="form-input" type="text" placeholder="123" maxlength="3"></div>
+        </div>
+        <button class="checkout-btn" onclick="placeOrder('card')">ชำระเงินด้วยบัตร</button>
+      </div>
+      <div class="pay-form" id="form-promptpay">
+        <div class="promptpay-panel">
+          <div class="qr-box">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="5" width="30" height="30" rx="2" fill="none" stroke="#1A3A6B" stroke-width="3"/><rect x="10" y="10" width="20" height="20" rx="1" fill="#1A3A6B"/>
+              <rect x="65" y="5" width="30" height="30" rx="2" fill="none" stroke="#1A3A6B" stroke-width="3"/><rect x="70" y="10" width="20" height="20" rx="1" fill="#1A3A6B"/>
+              <rect x="5" y="65" width="30" height="30" rx="2" fill="none" stroke="#1A3A6B" stroke-width="3"/><rect x="10" y="70" width="20" height="20" rx="1" fill="#1A3A6B"/>
+              <rect x="40" y="5" width="5" height="5" fill="#1A3A6B"/><rect x="48" y="5" width="5" height="5" fill="#1A3A6B"/><rect x="56" y="5" width="5" height="5" fill="#1A3A6B"/>
+              <rect x="40" y="40" width="5" height="5" fill="#1A3A6B"/><rect x="48" y="40" width="5" height="5" fill="#1A3A6B"/><rect x="56" y="40" width="5" height="5" fill="#1A3A6B"/>
+              <rect x="65" y="40" width="5" height="5" fill="#1A3A6B"/><rect x="73" y="48" width="5" height="5" fill="#1A3A6B"/><rect x="40" y="65" width="5" height="5" fill="#1A3A6B"/>
+            </svg>
+          </div>
+          <div class="promptpay-num" id="ppAmount">฿ 0.00</div>
+          <div class="promptpay-sub">หมายเลข PromptPay: 086-3279508</div>
+          <div class="promptpay-steps">
+            <div class="step"><div class="step-num">1</div><span>เปิดแอปธนาคาร เลือก "โอนเงิน"</span></div>
+            <div class="step"><div class="step-num">2</div><span>สแกน QR Code หรือพิมพ์เบอร์ 086-3279508</span></div>
+            <div class="step"><div class="step-num">3</div><span>ระบุยอดเงินแล้วยืนยันการโอน</span></div>
+            <div class="step"><div class="step-num">4</div><span>กดปุ่มยืนยันด้านล่าง</span></div>
+          </div>
+        </div>
+        <button class="checkout-btn" style="margin-top:1rem;" onclick="placeOrder('promptpay')">ยืนยันการชำระ PromptPay</button>
+      </div>
+      <div class="pay-form" id="form-paypal">
+        <div class="paypal-panel">
+          <div class="paypal-logo">Pay<span>Pal</span></div>
+          <div class="paypal-note">ชำระเงินอย่างปลอดภัยผ่าน PayPal</div>
+          <button class="paypal-btn" onclick="placeOrder('paypal')">🅿️ ชำระเงินด้วย PayPal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <h2 class="success-title">สั่งซื้อสำเร็จ!</h2>
+    <p class="success-sub">ขอบคุณที่ไว้วางใจ KRC Auto Parts<br>ทีมงานจะติดต่อยืนยันออเดอร์โดยเร็ว</p>
+    <div class="order-ref" id="orderRef">ORDER #KRC-00000</div>
+    <button class="btn-gold" style="width:100%;padding:0.8rem;" onclick="closeSuccess()">กลับสู่หน้าหลัก</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">KRC <span>AUTO PARTS</span></div>
+  <div class="footer-info">บริษัท กุ๊ก รุ่งเจริญ ออโต้พาร์ท จำกัด<br>51/244 ซอยนวลจันทร์ 17 แขวงนวลจันทร์ เขตบึงกุ่ม กรุงเทพมหานคร 10230<br>📞 086-3279508</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://kukrungcharoenservice-production.up.railway.app';
+let cart = {}, selectedCat = '', allProducts = [];
+
+async function loadCategories() {
+  try {
+    const cats = await fetch(API+'/api/categories').then(r=>r.json());
+    const grid = document.getElementById('catsGrid');
+    grid.innerHTML = `
+      <div class="cat-card cat-all active" onclick="filterByCat('',this)">
+        <div class="cat-icon">🏪</div>
+        <div class="cat-name" style="color:white">ทั้งหมด</div>
+        <div class="cat-count" style="color:rgba(255,255,255,0.7)">${allProducts.length} รายการ</div>
+      </div>
+      ${cats.map(c=>`
+        <div class="cat-card" onclick="filterByCat('${c.name}',this)">
+          <div class="cat-icon">${c.icon||'📦'}</div>
+          <div class="cat-name">${c.name}</div>
+          <div class="cat-count">${c.count||0} รายการ</div>
+        </div>`).join('')}`;
+  } catch(e) { console.error(e); }
+}
+
+async function loadProducts(category='') {
+  try {
+    const url = category ? `${API}/api/products?category=${encodeURIComponent(category)}` : `${API}/api/products`;
+    const products = await fetch(url).then(r=>r.json());
+    allProducts = products;
+    renderProducts(products);
+    document.getElementById('heroProductCount').textContent = products.length + '+';
+    document.getElementById('productsCount').textContent = `${products.length} รายการ`;
+  } catch(e) {
+    document.getElementById('productsGrid').innerHTML = `<div class="loading-products">ไม่สามารถโหลดสินค้าได้ครับ</div>`;
+  }
+}
+
+function renderProducts(products) {
+  const grid = document.getElementById('productsGrid');
+  if (products.length === 0) {
+    grid.innerHTML = `<div class="empty-products"><div class="empty-products-icon">📦</div><p>ยังไม่มีสินค้าในหมวดนี้ครับ</p></div>`;
+    return;
+  }
+  const emojis = {'เครื่องยนต์':'🔧','ช่วงล่าง':'🛞','ไฟ & ไฟฟ้า':'💡','แอร์ & หม้อน้ำ':'❄️','เบรก & คลัทช์':'🔩','น้ำมัน & ฟิลเตอร์':'🛢️'};
+  grid.innerHTML = products.map(p=>`
+    <div class="product-card">
+      <div class="product-img">
+        ${p.badge?`<div class="product-badge${p.badge==='ใหม่'?' new':''}">${p.badge}</div>`:''}
+        <span>${emojis[p.category]||'📦'}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-brand">${p.brand||p.category}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.description||p.desc||''}</div>
+        <div class="product-footer">
+          <div class="product-price">฿${Number(p.price).toLocaleString()}<small> บาท</small></div>
+          <button class="add-btn" onclick="addToCart('${p._id||p.id}','${p.name}',${p.price},'${emojis[p.category]||'📦'}')">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterByCat(cat, el) {
+  selectedCat = cat;
+  document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('productsTitle').textContent = cat || 'สินค้าทั้งหมด';
+  loadProducts(cat);
+  document.getElementById('products').scrollIntoView({behavior:'smooth'});
+}
+
+function addToCart(id, name, price, emoji) {
+  if(cart[id]) cart[id].qty++;
+  else cart[id] = {id, name, price, emoji, qty:1};
+  updateCartCount();
+  showToast(`เพิ่ม "${name}" ลงตะกร้าแล้ว ✓`);
+}
+function removeFromCart(id) { delete cart[id]; renderCart(); updateCartCount(); }
+function changeQty(id,d) { if(!cart[id]) return; cart[id].qty+=d; if(cart[id].qty<=0) delete cart[id]; renderCart(); updateCartCount(); }
+function updateCartCount() { document.getElementById('cartCount').textContent=Object.values(cart).reduce((s,i)=>s+i.qty,0); }
+function getSubtotal() { return Object.values(cart).reduce((s,i)=>s+i.price*i.qty,0); }
+
+function renderCart() {
+  const items = Object.values(cart);
+  const content = document.getElementById('cartContent');
+  const checkout = document.getElementById('checkoutSection');
+  if(items.length===0) { content.innerHTML=`<div class="empty-cart"><div class="empty-cart-icon">🛒</div><p>ยังไม่มีสินค้า</p></div>`; checkout.style.display='none'; return; }
+  content.innerHTML = items.map(i=>`
+    <div class="cart-item">
+      <div class="cart-item-img">${i.emoji}</div>
+      <div style="flex:1">
+        <div class="cart-item-name">${i.name}</div>
+        <div class="cart-item-price">฿${i.price.toLocaleString()} / ชิ้น</div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="changeQty('${i.id}',-1)">−</button>
+          <span class="qty-val">${i.qty}</span>
+          <button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button>
+          <button class="remove-btn" onclick="removeFromCart('${i.id}')">ลบ</button>
+        </div>
+      </div>
+      <div style="font-weight:700;font-size:0.9rem;color:var(--blue2)">฿${(i.price*i.qty).toLocaleString()}</div>
+    </div>`).join('');
+  checkout.style.display='block';
+  const sub=getSubtotal(), ship=sub>=3000?0:150, total=sub+ship;
+  document.getElementById('cartSummary').innerHTML=`
+    <div class="sum-row"><span>ราคาสินค้า</span><span>฿${sub.toLocaleString()}</span></div>
+    <div class="sum-row"><span>ค่าจัดส่ง</span><span>${ship===0?'<span style="color:#2A6B3C">ฟรี!</span>':'฿'+ship}</span></div>
+    ${sub<3000?`<div class="sum-row"><span style="font-size:0.75rem;color:#2A6B3C">ซื้อเพิ่ม ฿${(3000-sub).toLocaleString()} ส่งฟรี</span></div>`:''}
+    <div class="sum-row total"><span>รวมทั้งหมด</span><span>฿${total.toLocaleString()}</span></div>`;
+  document.getElementById('ppAmount').textContent=`฿ ${total.toLocaleString()}.00`;
+}
+
+function toggleCart() { const m=document.getElementById('cartModal'); m.classList.toggle('open'); if(m.classList.contains('open')) renderCart(); }
+function selectPay(m) {
+  document.querySelectorAll('.pay-method').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.pay-form').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`pm-${m}`).classList.add('active');
+  document.getElementById(`form-${m}`).classList.add('active');
+}
+function placeOrder(method) {
+  const ref='KRC-'+Math.floor(Math.random()*90000+10000);
+  document.getElementById('orderRef').textContent=`ORDER #${ref}`;
+  document.getElementById('cartModal').classList.remove('open');
+  document.getElementById('successOverlay').classList.add('open');
+  cart={}; updateCartCount();
+}
+function closeSuccess() { document.getElementById('successOverlay').classList.remove('open'); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+// Load on start
+loadProducts().then(()=>loadCategories());
+</script>
+</body>
+</html>
