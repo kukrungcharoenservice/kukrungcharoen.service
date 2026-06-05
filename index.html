@@ -308,27 +308,55 @@ async function loadProducts(category='') {
 
 function renderProducts(products) {
   const grid = document.getElementById('productsGrid');
+
   if (products.length === 0) {
     grid.innerHTML = `<div class="empty-products"><div class="empty-products-icon">📦</div><p>ยังไม่มีสินค้าในหมวดนี้ครับ</p></div>`;
     return;
   }
-  const emojis = {'เครื่องยนต์':'🔧','ช่วงล่าง':'🛞','ไฟ & ไฟฟ้า':'💡','แอร์ & หม้อน้ำ':'❄️','เบรก & คลัทช์':'🔩','น้ำมัน & ฟิลเตอร์':'🛢️'};
-  grid.innerHTML = products.map(p=>`
-    <div class="product-card">
-      <div class="product-img">
-        ${p.badge?`<div class="product-badge${p.badge==='ใหม่'?' new':''}">${p.badge}</div>`:''}
-        <span>${emojis[p.category]||'📦'}</span>
-      </div>
-      <div class="product-info">
-        <div class="product-brand">${p.brand||p.category}</div>
-        <div class="product-name">${p.name}</div>
-        <div class="product-desc">${p.description||p.desc||''}</div>
-        <div class="product-footer">
-          <div class="product-price">฿${Number(p.price).toLocaleString()}<small> บาท</small></div>
-          <button class="add-btn" onclick="addToCart('${p._id||p.id}','${p.name}',${p.price},'${emojis[p.category]||'📦'}')">+</button>
+
+  const emojis = {
+    'เครื่องยนต์':'🔧',
+    'ช่วงล่าง':'🛞',
+    'ไฟ & ไฟฟ้า':'💡',
+    'แอร์ & หม้อน้ำ':'❄️',
+    'เบรก & คลัทช์':'🔩',
+    'น้ำมัน & ฟิลเตอร์':'🛢️'
+  };
+
+  grid.innerHTML = products.map(p => {
+    const stock = p.inventory?.available ?? p.stock ?? 0;
+    const productId = p._id || p.id;
+    const emoji = emojis[p.category] || '📦';
+
+    return `
+      <div class="product-card">
+        <div class="product-img">
+          ${p.badge ? `<div class="product-badge${p.badge === 'ใหม่' ? ' new' : ''}">${p.badge}</div>` : ''}
+          <span>${emoji}</span>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">${p.brand || p.category}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.description || p.desc || ''}</div>
+
+          <div class="product-footer">
+            <div>
+              <div class="product-price">฿${Number(p.price).toLocaleString()}<small> บาท</small></div>
+              <div style="font-size:0.72rem;color:${stock <= 0 ? '#B02020' : 'var(--text2)'};margin-top:3px;">
+                ${stock <= 0 ? 'สินค้าหมด' : `คงเหลือ ${stock} ชิ้น`}
+              </div>
+            </div>
+
+            ${
+              stock <= 0
+                ? `<button class="add-btn" disabled style="opacity:.4;cursor:not-allowed;">หมด</button>`
+                : `<button class="add-btn" onclick="addToCart('${productId}','${String(p.name).replace(/'/g, "\\'")}',${Number(p.price || 0)},'${emoji}')">+</button>`
+            }
+          </div>
         </div>
       </div>
-    </div>`).join('');
+    `;
+  }).join('');
 }
 
 function filterByCat(cat, el) {
@@ -341,13 +369,58 @@ function filterByCat(cat, el) {
 }
 
 function addToCart(id, name, price, emoji) {
-  if(cart[id]) cart[id].qty++;
-  else cart[id] = {id, name, price, emoji, qty:1};
+  const product = allProducts.find(p => String(p._id || p.id) === String(id));
+  const stock = product?.inventory?.available ?? product?.stock ?? 0;
+  const currentQty = cart[id]?.qty || 0;
+
+  if (stock <= 0) {
+    showToast('สินค้าหมดแล้ว');
+    return;
+  }
+
+  if (currentQty >= stock) {
+    showToast(`สินค้าเหลือเพียง ${stock} ชิ้น`);
+    return;
+  }
+
+  if (cart[id]) {
+    cart[id].qty++;
+  } else {
+    cart[id] = { id, name, price, emoji, qty: 1 };
+  }
+
   updateCartCount();
   showToast(`เพิ่ม "${name}" ลงตะกร้าแล้ว ✓`);
 }
-function removeFromCart(id) { delete cart[id]; renderCart(); updateCartCount(); }
-function changeQty(id,d) { if(!cart[id]) return; cart[id].qty+=d; if(cart[id].qty<=0) delete cart[id]; renderCart(); updateCartCount(); }
+
+function removeFromCart(id) {
+  delete cart[id];
+  renderCart();
+  updateCartCount();
+}
+
+function changeQty(id, d) {
+  if (!cart[id]) return;
+
+  const product = allProducts.find(p => String(p._id || p.id) === String(id));
+  const stock = product?.inventory?.available ?? product?.stock ?? 0;
+  const nextQty = cart[id].qty + d;
+
+  if (d > 0 && nextQty > stock) {
+    showToast(`สินค้าเหลือเพียง ${stock} ชิ้น`);
+    return;
+  }
+
+  cart[id].qty = nextQty;
+
+  if (cart[id].qty <= 0) {
+    delete cart[id];
+  }
+
+  renderCart();
+  updateCartCount();
+}
+
 function updateCartCount() { document.getElementById('cartCount').textContent=Object.values(cart).reduce((s,i)=>s+i.qty,0); }
 function getSubtotal() { return Object.values(cart).reduce((s,i)=>s+i.price*i.qty,0); }
 
